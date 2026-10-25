@@ -221,6 +221,11 @@
         box-shadow: 0 10px 0 #3a5fd9, 0 18px 30px rgba(0,0,0,.25);
         animation-delay: .4s;
       }
+      .btnSciences {
+        background: linear-gradient(#a855f7, #ec4899);
+        box-shadow: 0 10px 0 #7e22ce, 0 18px 30px rgba(0,0,0,.25);
+        animation-delay: .6s;
+      }
 
       /* Conteneurs en grille pour les sous-boutons */
       .sousMenu {
@@ -269,6 +274,12 @@
       #sousMenuFrancais .sousBouton {
         background: linear-gradient(#58d68d, #28b463);
         box-shadow: 0 6px 0 #1e8449, 0 12px 20px rgba(0,0,0,.2);
+      }
+
+      /* Couleurs sous-boutons Sciences */
+      #sousMenuSciences .sousBouton {
+        background: linear-gradient(#c084fc, #e879f9);
+        box-shadow: 0 6px 0 #9333ea, 0 12px 20px rgba(0,0,0,.2);
       }
 
       /* Si le nombre total de sous-boutons est impair, le dernier s'étale sur les 2 colonnes */
@@ -342,11 +353,15 @@
       <a class="grosBouton btnHistoires" id="btnVocabulaire" href="anglais.html" title="Clique ici pour accéder au vocabulaire anglais !">
         <span class="icone">🐝</span> Mon vocabulaire anglais
       </a>
+      <div class="grosBouton btnSciences" id="btnSciences" title="Clique ici pour voir tous les exercices de sciences !">
+        <span class="icone">🔬</span> Mes sciences
+      </div>
     </div>
 
     <!-- Conteneurs des sous-menus générés dynamiquement par le script -->
     <div id="sousMenuCalculs" class="sousMenu"></div>
     <div id="sousMenuFrancais" class="sousMenu"></div>
+    <div id="sousMenuSciences" class="sousMenu"></div>
 
     <script>
       // =========================================================================
@@ -378,7 +393,16 @@
         { titre: "✍️ Application de conjugaison P2", fichier: "francais/conjugaison_p2_application.html", aide: "Révise tes verbes et la conjugaison !" },
         { titre: "🗂️ Tri des mots", fichier: "francais/tri_des_mots.html", aide: "Apprends à classer et trier la nature des mots !" },
         { titre: "🔤 Structure de la phrase", fichier: "francais/syntaxe_la_structure_de_la_phrase.html", aide: "Comprends la syntaxe et la construction des phrases !" },
-        { titre : "👨‍🏫 Compréhension de la lecture", fichier: "francais/compréhension_lecture.html", aide: "Comprends ce que tu lis !"}
+        { titre: "👨‍🏫 Compréhension de la lecture", fichier: "francais/compréhension_lecture.html", aide: "Comprends ce que tu lis !" }
+      ];
+
+      // =========================================================================
+      // ZONE D'EXTENSION FACILE : SCIENCES
+      // Pour ajouter d'autres exercices plus tard, ajoutez une nouvelle ligne ici !
+      // =========================================================================
+      const listeExercicesSciences = [
+        { titre: "⏱️ ChronoKids", fichier: "sciences/chronoKids.html", aide: "Exerce-toi avec ChronoKids !" },
+        { titre: "🦁 Quiz Animaux", fichier: "sciences/quiz-animaux.html", aide: "Découvre les animaux avec ce quiz !" }
       ];
 
       // Génération automatique des boutons de calcul
@@ -403,6 +427,17 @@
         conteneurSousMenuFrancais.appendChild(lien);
       });
 
+      // Génération automatique des boutons de sciences
+      const conteneurSousMenuSciences = document.getElementById("sousMenuSciences");
+      listeExercicesSciences.forEach(exo => {
+        const lien = document.createElement("a");
+        lien.className = "sousBouton";
+        lien.href = exo.fichier;
+        lien.textContent = exo.titre;
+        if (exo.aide) lien.title = exo.aide;
+        conteneurSousMenuSciences.appendChild(lien);
+      });
+
       // =========================================================================
       // ZONE D'EXTENSION FACILE : BOÎTE À OUTILS
       // Pour ajouter un choix, ajoutez simplement un objet à cette liste.
@@ -420,9 +455,14 @@
           aide: "Adapter les questions de compréhension en lecture."
         },
         { 
-          titre: " 👀 Où trouver ou créer des exercices supplémentaires",
+          titre: "👀 Où trouver ou créer des exercices supplémentaires",
           fichier : "où-trouver-ou-créer-vos-propres-exercices.html",
           aide : "Trois sites qui te permettront de créer plein d'exercices interactif sans savoir programmer"
+        },
+        { 
+          titre: "😻 Ajouter des animaux pour le quiz animaux",
+          fichier : "sciences/editeur-animaux.html",
+          aide : "Ajouter des animaux à la liste des animaux déjà existante"
         }
       ];
 
@@ -463,22 +503,32 @@
       const btnCalculs = document.getElementById("btnCalculs");
       const btnFrancais = document.getElementById("btnFrancais");
       const btnVocabulaire = document.getElementById("btnVocabulaire");
+      const btnSciences = document.getElementById("btnSciences");
 
       // Gestion des affichages de sous-menus
       btnCalculs.addEventListener("click", () => {
         conteneurSousMenuFrancais.classList.remove("visible");
+        conteneurSousMenuSciences.classList.remove("visible");
         conteneurSousMenuCalculs.classList.toggle("visible");
       });
 
       btnFrancais.addEventListener("click", () => {
         conteneurSousMenuCalculs.classList.remove("visible");
+        conteneurSousMenuSciences.classList.remove("visible");
         conteneurSousMenuFrancais.classList.toggle("visible");
+      });
+
+      btnSciences.addEventListener("click", () => {
+        conteneurSousMenuCalculs.classList.remove("visible");
+        conteneurSousMenuFrancais.classList.remove("visible");
+        conteneurSousMenuSciences.classList.toggle("visible");
       });
 
       // Masquage lors du clic sur Vocabulaire
       btnVocabulaire.addEventListener("click", () => {
         conteneurSousMenuCalculs.classList.remove("visible");
         conteneurSousMenuFrancais.classList.remove("visible");
+        conteneurSousMenuSciences.classList.remove("visible");
       });
 
       function lancerConfettis() {
