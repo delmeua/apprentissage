@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6c63ff">
+<title>ChronoKids — La machine à remonter le temps</title>
+<style>
+:root{--ink:#23234a;--purple:#6c63ff;--pink:#ff6b9a;--mint:#d8fff0;--yellow:#fff0a8;--paper:#fffdf7}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(135deg,#e6f7ff,#f8e8ff 55%,#fff4d8);min-height:100vh}
+button,select{font:inherit}button{cursor:pointer;touch-action:manipulation;border:0;border-radius:16px;padding:12px 18px;font-weight:800;transition:transform .12s,filter .12s}button:hover{filter:brightness(1.04);transform:translateY(-2px)}button:focus-visible{outline:4px solid #ffb703;outline-offset:3px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px clamp(14px,4vw,40px)}.brand{font-weight:1000;font-size:clamp(1.15rem,3vw,1.7rem)}.brand span{color:var(--purple)}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.soft{background:white;color:var(--ink);box-shadow:0 4px 0 #dedaf7}.danger{background:#ff6685;color:white;box-shadow:0 4px 0 #d84b6a}
+main{max-width:1050px;margin:auto;padding:12px 18px 42px}.hero{text-align:center;padding:12px 0 20px}.badge{display:inline-block;background:var(--yellow);padding:7px 13px;border-radius:99px;font-weight:900;font-size:.9rem}.hero h1{font-size:clamp(1.7rem,5vw,3.2rem);margin:12px 0 6px;line-height:1.08}.hero p{font-size:1.05rem;margin:0 auto;max-width:650px}
+.panel{background:rgba(255,255,255,.92);border:3px solid white;border-radius:28px;padding:clamp(16px,3vw,30px);box-shadow:0 12px 35px #5544a21a}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;align-items:end}.field label{display:block;font-weight:900;margin:0 0 7px}.field select{width:100%;padding:13px;border:2px solid #e5e1ff;border-radius:14px;background:#fff;color:var(--ink)}
+.primary{background:var(--purple);color:white;box-shadow:0 5px 0 #4940c4}.green{background:#20bf8f;color:#083e32;box-shadow:0 5px 0 #13966e}.orange{background:#ffbe55;color:#503200;box-shadow:0 5px 0 #e39a2e}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:18px}
+.game{margin-top:20px;display:none}.game-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.progress{height:12px;background:#eeeaff;border-radius:99px;overflow:hidden;margin:14px 0 22px}.progress div{height:100%;width:0;background:linear-gradient(90deg,#6c63ff,#ff6b9a);transition:width .3s}
+.prompt{text-align:center;font-size:clamp(1.2rem,3.5vw,1.8rem);font-weight:950;margin:12px 0 8px}.hint{text-align:center;color:#656585;margin:0 0 20px}.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;min-height:76px}.chip{background:#fff0a8;border:2px solid #ffdb62;color:#503b00;box-shadow:0 4px 0 #e8c54c;font-size:clamp(1rem,2.5vw,1.25rem);min-width:90px}.chip.selected{background:#d8fff0;border-color:#20bf8f;box-shadow:0 4px 0 #13966e}.chip:disabled{opacity:.48;cursor:default;transform:none}.slots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:20px 0;min-height:60px}.slot{border:2px dashed #c8c2f5;background:#faf9ff;border-radius:15px;min-width:105px;min-height:53px;padding:10px;display:flex;align-items:center;justify-content:center;font-weight:850}.slot.filled{border-style:solid;background:#e9e7ff}.feedback{display:none;margin:18px auto 0;max-width:720px;padding:17px;border-radius:18px;text-align:center;font-weight:800;line-height:1.5}.feedback.good{display:block;background:#d8fff0;color:#075d43}.feedback.bad{display:block;background:#fff0d4;color:#754100}.feedback .correct{display:block;margin-top:7px}.small{font-size:.9rem;color:#6a6988;text-align:center;margin-top:18px}.stars{font-size:1.4rem}.footer{text-align:center;padding:20px;color:#66658a;font-size:.9rem}
+@media(max-width:540px){.top{align-items:flex-start}.top-actions button{padding:10px 12px}.slot{min-width:88px;flex:1 1 28%}.chip{flex:1 1 28%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand">⏳ <span>ChronoKids</span></div>
+ <div class="top-actions">
+  <button class="soft" id="speakToggle" aria-pressed="true">🔊 Voix : ON</button>
+  <button class="danger" id="quit">🚪 <span data-i18n="quit">Quitter</span></button>
+ </div>
+</header>
+<main>
+ <section class="hero">
+  <span class="badge" data-i18n="badge">🎒 ChronoKids</span>
+  <h1 data-i18n="title">La machine à remonter le temps !</h1>
+  <p><span id="introText" data-i18n="intro">Aide la petite fusée à remettre les jours et les mois dans le bon ordre. Chaque bonne réponse te fait gagner des points !</span> <button class="soft" id="repeatIntro" type="button" style="padding:6px 10px;font-size:0.85rem;margin-left:6px;" data-i18n="repeatBtn">🔊 Réécouter</button></p>
+ </section>
+ <section class="panel">
+  <div class="setup">
+   <div class="field"><label for="language" data-i18n="languageLabel">🌍 Langue de l'interface</label><select id="language"><option value="fr">Français</option><option value="en">English</option></select></div>
+   <div class="field"><label for="topic" data-i18n="topicLabel">🗓️ Mission</label><select id="topic"><option value="days">Les jours de la semaine</option><option value="months">Les mois de l'année</option></select></div>
+   <div class="field"><label for="count" data-i18n="countLabel">⭐ Nombre de défis</label><select id="count"><option value="5">5 défis</option><option value="8">8 défis</option><option value="12">12 défis</option></select></div>
+  </div>
+  <div class="row"><button class="primary" id="start" type="button" data-i18n="start">🚀 Commencer la mission</button></div>
+  <p class="small" data-i18n="note">Astuce : touche ou clique sur les étiquettes dans l'ordre. Aucun clavier nécessaire !</p>
+ </section>
+ <section class="panel game" id="game" aria-live="polite">
+  <div class="game-head"><strong id="missionLabel">🪐 Mission 1</strong><strong id="score">⭐ 0</strong></div>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="prompt" id="prompt"></div><p class="hint" id="hint"></p>
+  <div class="chips" id="choices"></div>
+  <div class="slots" id="slots"></div>
+  <div class="row"><button class="soft" id="undo" type="button" data-i18n="undo">↩️ Annuler</button><button class="green" id="check" type="button" data-i18n="check">✅ Vérifier</button><button class="orange" id="next" type="button" hidden data-i18n="next">➡️ Suivant</button></div>
+  <div class="feedback" id="feedback" role="status" aria-live="assertive"></div>
+ </section>
+ <section class="panel game" id="end" style="text-align:center">
+  <div class="stars">🏆✨🚀</div><h2 data-i18n="finished">Mission accomplie !</h2><p id="finalText"></p>
+  <div class="row"><button class="primary" id="again" type="button" data-i18n="again">🔁 Rejouer</button></div>
+ </section>
+</main>
+<div class="footer">⏳ ChronoKids • <span data-i18n="footer">Apprendre en s'amusant !</span></div>
+<script>
+const translations={
+ fr:{quit:"Quitter",badge:"🎒 ChronoKids",title:"La machine à remonter le temps !",intro:"Aide la petite fusée à remettre les jours et les mois dans le bon ordre. Chaque bonne réponse te fait gagner des points !",repeatBtn:"🔊 Réécouter",languageLabel:"🌍 Langue de l'interface",topicLabel:"🗓️ Mission",countLabel:"⭐ Nombre de défis",start:"🚀 Commencer la mission",note:"Astuce : touche ou clique sur les étiquettes dans l'ordre. Aucun clavier nécessaire !",days:"Les jours de la semaine",months:"Les mois de l'année",undo:"↩️ Annuler",check:"✅ Vérifier",next:"➡️ Suivant",finished:"Mission accomplie !",again:"🔁 Rejouer",footer:"Apprendre en s'amusant !",mission:"🪐 Mission",of:"sur",promptDays:"Remets les jours dans l'ordre en partant du premier jour d'école.",promptMonths:"Remets les mois de l'année dans le bon ordre.",hint:"Clique ou touche les étiquettes dans le bon ordre, puis vérifie.",empty:"Choisis au moins une étiquette avant de vérifier.",good:"Bravo ! C'est le bon ordre !",bad:"Pas tout à fait, mais tu apprends !",correct:"La bonne réponse :",score:"Points",done:"Tu as terminé la mission !",result:"Tu as obtenu {score} point sur {total}.",resultPlural:"Tu as obtenu {score} points sur {total}.",voiceOn:"🔊 Voix : ON",voiceOff:"🔇 Voix : OFF",first:"lundi",school:"en partant du premier jour d'école"},
+ en:{quit:"Quit",badge:"🎒 ChronoKids",title:"The Time-Travel Machine!",intro:"Help the little rocket put the days and months in the right order. Every correct answer earns you points!",repeatBtn:"🔊 Listen again",languageLabel:"🌍 Interface language",topicLabel:"🗓️ Mission",countLabel:"⭐ Number of challenges",start:"🚀 Start the mission",note:"Tip: tap or click the labels in order. No keyboard needed!",days:"Days of the week",months:"Months of the year",undo:"↩️ Undo",check:"✅ Check",next:"➡️ Next",finished:"Mission complete!",again:"🔁 Play again",footer:"Learning is fun!",mission:"🪐 Mission",of:"of",promptDays:"Put the days in order, starting with Monday.",promptMonths:"Put the months of the year in the right order.",hint:"Tap or click the labels in the right order, then check.",empty:"Choose at least one label before checking.",good:"Well done! That's the right order!",bad:"Not quite, but you're learning!",correct:"The correct answer:",score:"Points",done:"You've completed the mission!",result:"You earned {score} point out of {total}.",resultPlural:"You earned {score} points out of {total}.",voiceOn:"🔊 Voice: ON",voiceOff:"🔇 Voice: OFF",first:"Monday",school:"starting with Monday"}
+};
+const days=[["Lundi","Monday"],["Mardi","Tuesday"],["Mercredi","Wednesday"],["Jeudi","Thursday"],["Vendredi","Friday"],["Samedi","Saturday"],["Dimanche","Sunday"]];
+const months=[["Janvier","January"],["Février","February"],["Mars","March"],["Avril","April"],["Mai","May"],["Juin","June"],["Juillet","July"],["Août","August"],["Septembre","September"],["Octobre","October"],["Novembre","November"],["Décembre","December"]];
+let lang="fr",sequence=[],selected=[],round=0,total=5,score=0,locked=false,voice=true,topic="days",pool=[];
+const $=id=>document.getElementById(id);
+function t(k){return translations[lang][k]||translations.fr[k]||k}
+function words(){return (topic==="days"?days:months).map(x=>x[lang==="fr"?0:1])}
+function localizedPair(word){let p=(topic==="days"?days:months).find(x=>x[0]===word || x[1]===word);return p?p[lang==="fr"?0:1]:word}
+function say(text){if(!voice||!("speechSynthesis"in window))return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=lang==="fr"?"fr-FR":"en-GB";u.rate=.88; speechSynthesis.speak(u)}catch(e){}}
+function applyLanguage(){lang=$("language").value;document.documentElement.lang=lang;document.querySelectorAll("[data-i18n]").forEach(el=>{let key=el.dataset.i18n;el.textContent=t(key)});$("topic").options[0].textContent=t("days");$("topic").options[1].textContent=t("months");$("count").innerHTML='<option value="5">5</option><option value="8">8</option><option value="12">12</option>';if($("game").style.display==="block"&&!locked)renderRound();$("speakToggle").textContent=voice?t("voiceOn"):t("voiceOff")}
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function start(){topic=$("topic").value;total=+ $("count").value;round=0;score=0;let rawPool=topic==="days"?days:months;pool=rawPool.map(x=>x[lang==="fr"?0:1]);$("game").style.display="block";$("end").style.display="none";$("score").textContent="⭐ 0";newRound();$("game").scrollIntoView({behavior:"smooth",block:"start"})}
+function newRound(){locked=false;selected=[];let rawPool=topic==="days"?days:months;pool=rawPool.map(x=>x[lang==="fr"?0:1]);sequence=shuffle(pool).slice(0,Math.min(topic==="days"?5:6,pool.length));sequence.sort(()=>Math.random()-.5);$("feedback").className="feedback";$("feedback").innerHTML="";$("next").hidden=true;$("check").hidden=false;$("undo").hidden=false;$("prompt").textContent=t(topic==="days"?"promptDays":"promptMonths");$("hint").textContent=t("hint");$("missionLabel").textContent=`${t("mission")} ${round+1} ${t("of")} ${total}`;$("bar").style.width=(round/total*100)+"%";renderRound();say($("prompt").textContent)}
+function renderRound(){let choices=$("choices"),slots=$("slots");choices.innerHTML="";slots.innerHTML="";let list=shuffle(sequence.filter(x=>!selected.includes(x)));list.forEach(word=>{let b=document.createElement("button");b.className="chip";b.textContent=word;b.setAttribute("aria-label",word);b.onclick=()=>{if(locked)return;selected.push(word);renderRound()};choices.appendChild(b)});selected.forEach((word,i)=>{let s=document.createElement("button");s.className="slot filled";s.textContent=(i+1)+". "+word;s.setAttribute("aria-label",`Position ${i+1}: ${word}. ${lang==="fr"?"Toucher pour retirer":"Tap to remove"}`);s.onclick=()=>{if(!locked){selected.splice(i,1);renderRound()}};slots.appendChild(s)});for(let i=selected.length;i<sequence.length;i++){let s=document.createElement("div");s.className="slot";s.textContent=`${i+1}. …`;slots.appendChild(s)}}
+function check(){if(locked)return;if(!selected.length){showFeedback(t("empty"),false);say(t("empty"));return}if(selected.length<sequence.length){let msg=lang==="fr"?"Continue : il reste des étiquettes à placer.":"Keep going: there are labels left to place.";showFeedback(msg,false);say(msg);return}locked=true;let expected=[...sequence].sort((a,b)=>pool.indexOf(a)-pool.indexOf(b));let correct=selected.every((w,i)=>w===expected[i]);if(correct){score++;$("score").textContent="⭐ "+score;showFeedback(t("good"),true);say(t("good"))}else{let answer=expected.join(" → ");let answerSpoken=expected.join(", ");let fullMsg=`${t("bad")}<span class="correct">${t("correct")}<br>${answer}</span>`;showFeedback(fullMsg,false);let spokenFull=`${t("bad")} ${t("correct")} ${answerSpoken}`;say(spokenFull);}$("bar").style.width=((round+1)/total*100)+"%";$("check").hidden=true;$("undo").hidden=true;$("next").hidden=false;$("next").textContent=round+1>=total?t("finished"):"➡️ "+t("next")}
+function showFeedback(html,good){$("feedback").className="feedback "+(good?"good":"bad");$("feedback").innerHTML=html}
+function next(){round++;if(round>=total){$("game").style.display="none";$("end").style.display="block";let resKey = (score > 1) ? "resultPlural" : "result";let resText = t(resKey).replace("{score}",score).replace("{total}",total);$("finalText").textContent=resText;say(resText);$("end").scrollIntoView({behavior:"smooth"});return}newRound()}
+
+// Liaison des événements et initialisation audio sécurisée contre les restrictions du navigateur
+document.addEventListener("DOMContentLoaded", () => {
+  $("language").addEventListener("change", applyLanguage);
+  $("start").onclick = start;
+  $("check").onclick = check;
+  $("next").onclick = next;
+  $("undo").onclick = () => { if (!locked && selected.length) { selected.pop(); renderRound(); } };
+  $("again").onclick = start;
+  
+  $("speakToggle").onclick = () => {
+    voice = !voice;
+    $("speakToggle").textContent = voice ? t("voiceOn") : t("voiceOff");
+    $("speakToggle").setAttribute("aria-pressed", String(voice));
+    if (!voice && "speechSynthesis" in window) speechSynthesis.cancel();
+    else say(lang === "fr" ? "La voix est activée." : "Voice is on.");
+  };
+
+  $("repeatIntro").onclick = () => {
+    say($("introText").textContent);
+  };
+
+  $("quit").onclick = () => {
+    window.location.href = "../index.html";
+  };
+
+  applyLanguage();
+
+  // Énonciation spontanée au chargement, avec déblocage automatique sur la première interaction de l'utilisateur
+  let introSpoken = false;
+  const triggerInitialSpeech = () => {
+    if (!introSpoken) {
+      introSpoken = true;
+      say(translations.fr.intro);
+      window.removeEventListener("click", triggerInitialSpeech);
+      window.removeEventListener("touchstart", triggerInitialSpeech);
+    }
+  };
+
+  window.addEventListener("click", triggerInitialSpeech);
+  window.addEventListener("touchstart", triggerInitialSpeech);
+
+  // Tentative immédiate (fonctionne si le navigateur l'autorise)
+  setTimeout(() => {
+    if (!introSpoken) {
+      introSpoken = true;
+      say(translations.fr.intro);
+    }
+  }, 400);
+});
+</script>
+</body></html>

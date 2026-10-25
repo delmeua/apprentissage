@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Éditeur d'animaux - Quiz</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Trebuchet MS","Segoe UI",system-ui,Arial,sans-serif;color:#2b2d42;background:#eaf6fd}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;max-width:1000px;margin:0 auto}
+main{max-width:1000px;margin:0 auto;padding:0 14px 40px}
+h1{font-size:clamp(24px,5vw,34px);margin:6px 0 2px;color:#6c5ce7}
+h2{font-size:20px;margin:0 0 10px}
+p{line-height:1.45;margin:6px 0}
+.card{background:#fff;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 4px 0 #cfe3f0}
+.btn{font:inherit;font-weight:700;font-size:16px;border:0;border-radius:14px;padding:10px 16px;min-height:46px;cursor:pointer;color:#fff;background:#6c5ce7;box-shadow:0 4px 0 #4b3fb3;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #4b3fb3}
+.btn.green{background:#06b57a;box-shadow:0 4px 0 #048057}
+.btn.red{background:#ef476f;box-shadow:0 4px 0 #b02a4a}
+.btn.light{background:#fff;color:#2b2d42;box-shadow:0 4px 0 #b9c6d3;border:1px solid #d6e0e8}
+.btn.sm{min-height:38px;padding:6px 12px;font-size:14px}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 4px}
+input[type=text],textarea{font:inherit;width:100%;padding:10px 12px;border:2px solid #cfdbe6;border-radius:12px;background:#fff;color:#2b2d42}
+input[type=text]:focus,textarea:focus{outline:none;border-color:#6c5ce7}
+textarea{min-height:70px;resize:vertical}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.hint{font-size:13px;color:#5b6b7a;margin:3px 0 0}
+.pal{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.pal button{font-size:26px;width:46px;height:46px;border:2px solid transparent;border-radius:12px;background:#f3f8fc;cursor:pointer;padding:0}
+.pal button.on{border-color:#6c5ce7;background:#ece9ff}
+.big{font-size:56px;line-height:1}
+.diets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.diets button{font:inherit;font-weight:700;border:3px solid #d6e0e8;background:#fff;border-radius:16px;padding:12px;cursor:pointer;font-size:16px;color:#2b2d42}
+.diets button .e{display:block;font-size:34px}
+.diets button.on{border-color:#6c5ce7;background:#ece9ff}
+.err{background:#ffe0e8;color:#9a1d3b;border-radius:12px;padding:10px 12px;margin-top:12px;font-weight:700}
+.ok{background:#d8f8ea;color:#04694a;border-radius:12px;padding:10px 12px;margin-top:12px;font-weight:700}
+.prev{background:#fff4d6;border-radius:16px;padding:12px 14px;margin-top:14px}
+.prev b{display:block;margin-top:4px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.item{border:2px solid #e3edf4;border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center}
+.item .em{font-size:44px}
+.item .tx{flex:1;min-width:0}
+.item .tx small{color:#5b6b7a;display:block}
+.tag{display:inline-block;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;background:#ece9ff;color:#3c3489}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+pre{background:#2b2d42;color:#e8f1f8;border-radius:12px;padding:12px;overflow:auto;font-size:12px;max-height:240px;user-select:text}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700}
+.badge{background:#ffb703;color:#2b2d42;border-radius:10px;padding:3px 10px;font-weight:700;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <a class="btn red" href="../index.html">↩ index.html</a>
+  <a class="btn green" href="quiz-animaux.html">▶ Ouvrir le quiz</a>
+</header>
+<main>
+  <h1>Éditeur d'animaux</h1>
+  <p>Ajoutez vos propres animaux : ils apparaîtront dans le quiz, en français et en anglais.</p>
+
+  <div class="card" id="formCard">
+    <h2 id="formTitle">Ajouter un animal</h2>
+
+    <label>1. Choisis une image (emoji)</label>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span class="big" id="emoShow">❔</span>
+      <input type="text" id="emo" maxlength="8" placeholder="ou colle un emoji ici" style="max-width:220px" autocomplete="off">
+    </div>
+    <div class="pal" id="palA"></div>
+
+    <div class="grid2">
+      <div>
+        <label for="fr">2. Nom en français, avec l'article</label>
+        <input type="text" id="fr" placeholder="le hérisson" autocomplete="off">
+        <p class="hint">Exemples : le loup, la vache, l'écureuil.</p>
+      </div>
+      <div>
+        <label for="frDe">Même nom avec « de » (rempli automatiquement)</label>
+        <input type="text" id="frDe" placeholder="du hérisson" autocomplete="off">
+        <p class="hint">Sert pour : « Quel est le régime alimentaire <i>du loup</i> ? »</p>
+      </div>
+      <div>
+        <label for="en">3. Nom en anglais, avec « the »</label>
+        <input type="text" id="en" placeholder="the hedgehog" autocomplete="off">
+      </div>
+    </div>
+
+    <label>4. Régime alimentaire</label>
+    <div class="diets" id="diets">
+      <button type="button" data-d="carn"><span class="e">🥩</span>Carnivore<br><small>mange de la viande</small></button>
+      <button type="button" data-d="herb"><span class="e">🌿</span>Herbivore<br><small>mange des plantes</small></button>
+      <button type="button" data-d="omn"><span class="e">🍽️</span>Omnivore<br><small>mange de tout</small></button>
+    </div>
+
+    <div id="foodBox" style="display:none">
+      <label>5. Ce que l'animal mange (pour la question « Que mange… ? »)</label>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="big" id="fEmoShow">❔</span>
+        <input type="text" id="fEmo" maxlength="8" placeholder="emoji de la nourriture" style="max-width:220px" autocomplete="off">
+      </div>
+      <div class="pal" id="palF"></div>
+      <div class="grid2">
+        <div>
+          <label for="fFr">En français, avec « de / du / des »</label>
+          <input type="text" id="fFr" placeholder="des insectes" autocomplete="off">
+          <p class="hint">Exemples : de l'herbe, du foin, des carottes.</p>
+        </div>
+        <div>
+          <label for="fEn">En anglais</label>
+          <input type="text" id="fEn" placeholder="insects" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    <p class="hint" id="omnNote" style="display:none">Pour un omnivore, seule la question sur le régime est posée (sa nourriture est trop variée).</p>
+
+    <label>6. Anecdote amusante (facultatif)</label>
+    <div class="grid2">
+      <div>
+        <textarea id="fcFr" placeholder="Le hérisson dort tout l'hiver."></textarea>
+        <p class="hint">En français</p>
+      </div>
+      <div>
+        <textarea id="fcEn" placeholder="The hedgehog sleeps all winter."></textarea>
+        <p class="hint">In English</p>
+      </div>
+    </div>
+    <p class="hint">Pour un nombre, écris-le entre accolades, par exemple <b>{80}</b> : il s'affichera « 80 (quatre-vingts) » et sera lu « quatre-vingts » (septante, nonante…). Remplis les deux langues ou aucune.</p>
+
+    <div class="prev" id="prev"></div>
+    <div id="msg"></div>
+    <div class="row">
+      <button class="btn green" id="save" type="button">＋ Ajouter l'animal</button>
+      <button class="btn light" id="cancel" type="button" style="display:none">Annuler la modification</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Mes animaux ajoutés <span class="badge" id="count">0</span></h2>
+    <div class="list" id="list"></div>
+    <p id="empty" class="hint">Aucun animal ajouté pour le moment.</p>
+    <div class="row">
+      <button class="btn light" id="bi" type="button">📖 Voir les animaux déjà présents dans le quiz (<span id="biCount">0</span>)</button>
+    </div>
+    <div id="biBox" style="display:none;margin-top:14px">
+      <p class="hint">Ces animaux sont déjà dans le quiz : inutile de les ajouter.</p>
+      <div class="list" id="biList"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Enregistrer pour le quiz</h2>
+    <p>Le quiz lit un fichier nommé <b>animaux-perso.js</b>. Après chaque changement :</p>
+    <ol>
+      <li>Clique sur <b>Télécharger animaux-perso.js</b>.</li>
+      <li>Place le fichier dans le <b>même dossier</b> que <code>quiz-animaux.html</code> (remplace l'ancien).</li>
+      <li>Ouvre ou recharge le quiz.</li>
+    </ol>
+    <div class="row">
+      <button class="btn" id="dl" type="button">⬇ Télécharger animaux-perso.js</button>
+      <button class="btn light" id="imp" type="button">📂 Ouvrir un animaux-perso.js existant</button>
+      <input type="file" id="file" accept=".js,.json,.txt" style="display:none">
+      <span class="badge" id="state" style="display:none">Modifications non téléchargées</span>
+    </div>
+    <div id="msg2"></div>
+    <details>
+      <summary>Voir le contenu du fichier</summary>
+      <pre id="code"></pre>
+      <button class="btn light sm" id="copy" type="button">Copier</button>
+    </details>
+    <p class="hint">Un brouillon est gardé dans ce navigateur, mais seul le fichier téléchargé est utilisé par le quiz.</p>
+  </div>
+</main>
+
+<script>
+"use strict";
+var BUILTIN_DATA=[
+ {e:'🐄',fr:'la vache',en:'the cow',diet:'herb',food:'🌾 de l\'herbe'},
+ {e:'🐑',fr:'le mouton',en:'the sheep',diet:'herb',food:'🌾 de l\'herbe'},
+ {e:'🐴',fr:'le cheval',en:'the horse',diet:'herb',food:'🌾 du foin'},
+ {e:'🐰',fr:'le lapin',en:'the rabbit',diet:'herb',food:'🥕 des carottes'},
+ {e:'🦒',fr:'la girafe',en:'the giraffe',diet:'herb',food:'🍃 des feuilles'},
+ {e:'🐼',fr:'le panda',en:'the panda',diet:'herb',food:'🎍 du bambou'},
+ {e:'🦌',fr:'le cerf',en:'the deer',diet:'herb',food:'🍃 des feuilles'},
+ {e:'🐿️',fr:"l'écureuil",en:'the squirrel',diet:'',food:'🌰 des noisettes'},
+ {e:'🐺',fr:'le loup',en:'the wolf',diet:'carn',food:'🥩 de la viande'},
+ {e:'🦁',fr:'le lion',en:'the lion',diet:'carn',food:'🥩 de la viande'},
+ {e:'🐱',fr:'le chat',en:'the cat',diet:'carn',food:'🐭 des souris'},
+ {e:'🦉',fr:'la chouette',en:'the owl',diet:'carn',food:'🐭 des souris'},
+ {e:'🐸',fr:'la grenouille',en:'the frog',diet:'carn',food:'🐛 des insectes'},
+ {e:'🦈',fr:'le requin',en:'the shark',diet:'carn',food:'🐟 du poisson'},
+ {e:'🐷',fr:'le cochon',en:'the pig',diet:'omn',food:''},
+ {e:'🐔',fr:'la poule',en:'the hen',diet:'omn',food:''},
+ {e:'🐗',fr:'le sanglier',en:'the wild boar',diet:'omn',food:''},
+ {e:'🐻',fr:"l'ours",en:'the bear',diet:'omn',food:''},
+ {e:'🦊',fr:'le renard',en:'the fox',diet:'omn',food:''},
+ {e:'🦆',fr:'le canard',en:'the duck',diet:'omn',food:''},
+ {e:'🧒',fr:"l'humain",en:'the human',diet:'omn',food:''}
+];
+var BUILTIN=BUILTIN_DATA.map(function(a){return a.fr});
+var EMO_A=['🐕','🐈','🐓','🐖','🐎','🦢','🐦','🕊️','🦅','🐟','🐠','🐢','🐍','🦎','🐊','🐘','🦏','🦛','🐪','🦘','🐨','🐇','🐁','🦇','🐝','🐌','🦋','🐞','🕷️','🦀','🐙','🐬','🐳','🐧','🦓','🐆','🐅','🦜','🦩','🦔','🐐','🦃','🐒','🦍','🦉','🐸'];
+var EMO_F=['🥩','🍖','🐟','🐭','🐛','🦗','🥕','🌾','🍃','🌰','🍎','🍌','🌿','🍯','🌽','🥬','🍓','🐌','🦐','🍄'];
+var KEY='animauxPerso';
+var list=[],editing=-1,diet='',deDirty=false,unsaved=false;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+var DN={carn:'Carnivore',herb:'Herbivore',omn:'Omnivore'};
+var DE={carn:'🥩',herb:'🌿',omn:'🍽️'};
+
+function deFr(s){
+  s=s.trim();if(!s)return '';
+  var l=s.toLowerCase();
+  if(l.indexOf('le ')===0)return 'du '+s.slice(3);
+  if(l.indexOf('la ')===0)return 'de la '+s.slice(3);
+  if(l.indexOf("l'")===0||l.indexOf('l’')===0)return "de l'"+s.slice(2);
+  if(l.indexOf('les ')===0)return 'des '+s.slice(4);
+  return 'de '+s;
+}
+function buildPal(id,arr,target,show){
+  var box=$(id);box.innerHTML='';
+  arr.forEach(function(e){
+    var b=document.createElement('button');b.type='button';b.textContent=e;b.setAttribute('data-e',e);
+    b.onclick=function(){$(target).value=e;refresh()};
+    box.appendChild(b);
+  });
+}
+function mark(id,val){
+  var bs=$(id).querySelectorAll('button');
+  for(var i=0;i<bs.length;i++)bs[i].className=bs[i].getAttribute('data-e')===val?'on':'';
+}
+function setDiet(d){
+  diet=d;
+  var bs=$('diets').querySelectorAll('button');
+  for(var i=0;i<bs.length;i++)bs[i].className=bs[i].getAttribute('data-d')===d?'on':'';
+  $('foodBox').style.display=(d==='carn'||d==='herb')?'block':'none';
+  $('omnNote').style.display=d==='omn'?'block':'none';
+  refresh();
+}
+function refresh(){
+  var e=$('emo').value.trim(),fe=$('fEmo').value.trim();
+  $('emoShow').textContent=e||'❔';
+  $('fEmoShow').textContent=fe||'❔';
+  mark('palA',e);mark('palF',fe);
+  var fr=$('fr').value.trim(),en=$('en').value.trim();
+  var de=$('frDe').value.trim()||deFr(fr);
+  var h='<b>Aperçu dans le quiz</b>';
+  if(fr||en){
+    h+='FR : Quel est le régime alimentaire '+esc(de||'…')+' ?';
+    if(diet==='carn'||diet==='herb')h+='<br>FR : Que mange '+esc(fr||'…')+' ? → '+esc($('fFr').value.trim()||'…');
+    h+='<br>EN : What is the diet of '+esc(en||'…')+'?';
+    if(diet==='carn'||diet==='herb')h+='<br>EN : What does '+esc(en||'…')+' eat? → '+esc($('fEn').value.trim()||'…');
+  }else h+='<p class="hint">Remplis le nom pour voir l\'aperçu.</p>';
+  $('prev').innerHTML=h;
+}
+function showMsg(id,text,cls){$(id).innerHTML=text?'<div class="'+cls+'">'+esc(text)+'</div>':''}
+
+function readForm(){
+  var a={
+    e:$('emo').value.trim(),
+    fr:$('fr').value.trim(),
+    frDe:$('frDe').value.trim()||deFr($('fr').value),
+    en:$('en').value.trim(),
+    diet:diet,food:null,fact:null
+  };
+  if(diet==='carn'||diet==='herb')a.food={e:$('fEmo').value.trim(),fr:$('fFr').value.trim(),en:$('fEn').value.trim()};
+  var ff=$('fcFr').value.trim(),fe=$('fcEn').value.trim();
+  if(ff||fe)a.fact={fr:ff,en:fe};
+  return a;
+}
+function validate(a){
+  if(!a.e)return "Choisis une image pour l'animal.";
+  if(!a.fr)return "Écris le nom en français (avec l'article).";
+  if(!a.en)return "Écris le nom en anglais.";
+  if(!a.diet)return 'Choisis un régime alimentaire.';
+  if(a.diet!=='omn'&&(!a.food.e||!a.food.fr||!a.food.en))return "Complète la nourriture : image, français et anglais.";
+  if(a.fact&&(!a.fact.fr||!a.fact.en))return "Pour l'anecdote, remplis le français et l'anglais (ou laisse les deux vides).";
+  var low=a.fr.toLowerCase(),i;
+  for(i=0;i<BUILTIN.length;i++)if(BUILTIN[i]===low)return 'Cet animal existe déjà dans le quiz.';
+  for(i=0;i<list.length;i++)if(i!==editing&&list[i].fr.toLowerCase()===low)return 'Cet animal est déjà dans ta liste.';
+  return '';
+}
+function clearForm(){
+  ['emo','fr','frDe','en','fEmo','fFr','fEn','fcFr','fcEn'].forEach(function(i){$(i).value=''});
+  deDirty=false;editing=-1;diet='';setDiet('');
+  $('formTitle').textContent='Ajouter un animal';
+  $('save').textContent="＋ Ajouter l'animal";
+  $('cancel').style.display='none';
+  refresh();
+}
+function changed(){
+  unsaved=true;
+  try{localStorage.setItem(KEY,JSON.stringify(list))}catch(e){}
+  renderList();
+}
+function save(){
+  var a=readForm(),err=validate(a);
+  if(err){showMsg('msg',err,'err');return}
+  if(editing>=0){list[editing]=a;showMsg('msg',a.fr+' a été modifié.','ok')}
+  else{list.push(a);showMsg('msg',cap(a.fr)+' a été ajouté. N\'oublie pas de télécharger le fichier plus bas.','ok')}
+  changed();clearForm();
+}
+function edit(i){
+  var a=list[i];editing=i;
+  $('emo').value=a.e;$('fr').value=a.fr;$('frDe').value=a.frDe;$('en').value=a.en;deDirty=true;
+  if(a.food){$('fEmo').value=a.food.e;$('fFr').value=a.food.fr;$('fEn').value=a.food.en}
+  else{$('fEmo').value='';$('fFr').value='';$('fEn').value=''}
+  $('fcFr').value=a.fact?a.fact.fr:'';$('fcEn').value=a.fact?a.fact.en:'';
+  setDiet(a.diet);
+  $('formTitle').textContent='Modifier : '+a.fr;
+  $('save').textContent='✔ Enregistrer les modifications';
+  $('cancel').style.display='inline-flex';
+  showMsg('msg','','');
+  $('formCard').scrollIntoView({behavior:'smooth'});
+}
+function del(i){
+  if(!confirm('Supprimer '+list[i].fr+' ?'))return;
+  list.splice(i,1);
+  if(editing===i)clearForm();else if(editing>i)editing--;
+  changed();
+}
+function renderList(){
+  var box=$('list');box.innerHTML='';
+  list.forEach(function(a,i){
+    var d=document.createElement('div');d.className='item';
+    d.innerHTML='<span class="em">'+esc(a.e)+'</span><div class="tx"><b>'+esc(cap(a.fr))+'</b><small>'+esc(cap(a.en))+'</small><span class="tag">'+DE[a.diet]+' '+DN[a.diet]+'</span>'+(a.food?'<small>'+esc(a.food.e)+' '+esc(a.food.fr)+'</small>':'')+'</div>'+
+     '<div style="display:flex;flex-direction:column;gap:6px"><button class="btn light sm" type="button">✏️</button><button class="btn red sm" type="button">🗑</button></div>';
+    var bs=d.querySelectorAll('button');
+    bs[0].onclick=function(){edit(i)};
+    bs[1].onclick=function(){del(i)};
+    box.appendChild(d);
+  });
+  $('count').textContent=list.length;
+  $('empty').style.display=list.length?'none':'block';
+  $('state').style.display=unsaved?'inline-block':'none';
+  $('code').textContent=fileText();
+}
+function fileText(){
+  return '/* Animaux ajoutés avec editeur-animaux.html - ne pas modifier à la main */\nwindow.ANIMAUX_PERSO = '+JSON.stringify(list,null,2)+';\n';
+}
+function download(){
+  var blob=new Blob([fileText()],{type:'application/javascript;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='animaux-perso.js';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},500);
+  unsaved=false;renderList();
+  showMsg('msg2','Fichier téléchargé. Place-le dans le dossier du quiz.','ok');
+}
+function importFile(f){
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var t=String(r.result),s=t.indexOf('['),e=t.lastIndexOf(']');
+      var arr=JSON.parse(t.slice(s,e+1));
+      if(!Array.isArray(arr))throw new Error('format');
+      var n=0;
+      arr.forEach(function(a){
+        if(a&&a.e&&a.fr&&a.en&&DN[a.diet]){
+          var dup=list.some(function(x){return x.fr.toLowerCase()===a.fr.toLowerCase()});
+          if(!dup){list.push({e:a.e,fr:a.fr,frDe:a.frDe||deFr(a.fr),en:a.en,diet:a.diet,food:a.food||null,fact:a.fact||null});n++}
+        }
+      });
+      changed();unsaved=false;renderList();
+      showMsg('msg2',n+' animal(aux) importé(s).','ok');
+    }catch(x){showMsg('msg2',"Ce fichier n'a pas pu être lu. Choisis un fichier animaux-perso.js créé par cet éditeur.",'err')}
+  };
+  r.readAsText(f);
+}
+
+buildPal('palA',EMO_A,'emo');buildPal('palF',EMO_F,'fEmo');
+$('biCount').textContent=BUILTIN_DATA.length;
+BUILTIN_DATA.forEach(function(a){
+  var d=document.createElement('div');d.className='item';
+  d.innerHTML='<span class="em">'+esc(a.e)+'</span><div class="tx"><b>'+esc(cap(a.fr))+'</b><small>'+esc(cap(a.en))+'</small>'+
+   (a.diet?'<span class="tag">'+DE[a.diet]+' '+DN[a.diet]+'</span>':'<span class="tag">Question « Que mange… ? » seulement</span>')+
+   (a.food?'<small>'+esc(a.food)+'</small>':'')+'</div>';
+  $('biList').appendChild(d);
+});
+$('bi').onclick=function(){
+  var box=$('biBox'),open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  $('bi').firstChild.textContent=open?'🙈 Masquer les animaux déjà présents (':'📖 Voir les animaux déjà présents dans le quiz (';
+  if(open)box.scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+$('diets').querySelectorAll('button').forEach(function(b){b.onclick=function(){setDiet(b.getAttribute('data-d'))}});
+['emo','en','fEmo','fFr','fEn'].forEach(function(i){$(i).oninput=refresh});
+$('fr').oninput=function(){if(!deDirty)$('frDe').value=deFr($('fr').value);refresh()};
+$('frDe').oninput=function(){deDirty=$('frDe').value.trim()!=='';refresh()};
+$('save').onclick=save;
+$('cancel').onclick=function(){clearForm();showMsg('msg','','')};
+$('dl').onclick=download;
+$('imp').onclick=function(){$('file').click()};
+$('file').onchange=function(){if(this.files[0])importFile(this.files[0]);this.value=''};
+$('copy').onclick=function(){
+  var t=fileText();
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){showMsg('msg2','Contenu copié.','ok')},function(){showMsg('msg2','Copie impossible, sélectionne le texte à la main.','err')});
+  else showMsg('msg2','Copie impossible, sélectionne le texte à la main.','err');
+};
+try{var d=localStorage.getItem(KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)){list=arr;unsaved=list.length>0}}}catch(e){}
+setDiet('');renderList();
+</script>
+</body>
+</html>
