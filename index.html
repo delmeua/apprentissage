@@ -16,7 +16,7 @@
         align-items: center;
         justify-content: center;
         gap: 2.2rem;
-        padding: 2rem 1rem;
+        padding: 2rem 1rem 5rem 1rem;
         text-align: center;
         color: #fff;
         background: linear-gradient(135deg, #ff6b9d, #ffa62b, #ffd93d, #6bd67e, #4d96ff, #b36bff);
@@ -318,6 +318,61 @@
       @keyframes tombe {
         to { transform: translateY(110vh) rotate(720deg); }
       }
+
+      /* Bouton Télécharger ZIP en bas à droite avec infobulle au survol */
+      .download-wrapper {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 50;
+      }
+
+      .download-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 55px;
+        height: 55px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 4px solid #fff;
+        border-radius: 50%;
+        font-size: 26px;
+        text-decoration: none;
+        box-shadow: 0 6px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.2);
+        transition: transform 0.2s, background-color 0.2s;
+        cursor: pointer;
+      }
+
+      .download-btn:hover {
+        transform: scale(1.1) rotate(-8deg);
+        background: #ffffff;
+      }
+
+      .download-tooltip {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        width: min(320px, calc(100vw - 40px));
+        background: rgba(20, 20, 30, 0.95);
+        color: #fff;
+        text-align: left;
+        padding: 1rem;
+        border-radius: 16px;
+        border: 2px solid #fff;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        font-size: 0.92rem;
+        line-height: 1.4;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        pointer-events: none;
+        white-space: pre-line;
+      }
+
+      .download-wrapper:hover .download-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
@@ -363,6 +418,18 @@
     <div id="sousMenuFrancais" class="sousMenu"></div>
     <div id="sousMenuSciences" class="sousMenu"></div>
 
+    <!-- Petit bouton ZIP en bas à droite -->
+    <div class="download-wrapper">
+      <div class="download-tooltip">Tu veux l'avoir directement sur ton PC ou sur ta tablette
+Clique sur ce bouton et télécharge le fichier à l'endroit de ton choix
+Dézippe le fichier
+Ouvre le dossier Apprentissage que tu viens de créer
+Clique sur fichier index.html pour ouvrir le site</div>
+      <a href="ressources/Apprentissage.zip" download class="download-btn" aria-label="Télécharger le site complet">
+        💾
+      </a>
+    </div>
+
     <script>
       // =========================================================================
       // ZONE D'EXTENSION FACILE : CALCULS
@@ -386,7 +453,6 @@
 
       // =========================================================================
       // ZONE D'EXTENSION FACILE : FRANÇAIS
-      // Pour ajouter d'autres exercices plus tard, ajoutez une nouvelle ligne ici !
       // =========================================================================
       const listeExercicesFrancais = [
         { titre: "📝 Accords dans le groupe du nom", fichier: "francais/accords_dans_le_groupe_du_nom.html", aide: "Exerce-toi aux accords dans le groupe nominal !" },
@@ -398,7 +464,6 @@
 
       // =========================================================================
       // ZONE D'EXTENSION FACILE : SCIENCES
-      // Pour ajouter d'autres exercices plus tard, ajoutez une nouvelle ligne ici !
       // =========================================================================
       const listeExercicesSciences = [
         { titre: "⏱️ ChronoKids", fichier: "sciences/chronoKids.html", aide: "Exerce-toi avec ChronoKids !" },
@@ -440,8 +505,6 @@
 
       // =========================================================================
       // ZONE D'EXTENSION FACILE : BOÎTE À OUTILS
-      // Pour ajouter un choix, ajoutez simplement un objet à cette liste.
-      // Les chemins sont relatifs à ce fichier index.html.
       // =========================================================================
       const listeOutils = [
         {
